@@ -8,7 +8,7 @@ from builtins import str
 from future import standard_library
 standard_library.install_aliases()
 try:
-    from .file import File, WrongFormatError, BrokenFormatError
+    from file import File, WrongFormatError, BrokenFormatError, EmptyFileError
 except:
     # --- Allowing this file to be standalone..
     class WrongFormatError(Exception):
@@ -598,7 +598,7 @@ class FASTInputFile(File):
         return s
 
     def _write(self):
-        with open(self.filename,'w') as f:
+        with open(self.filename, 'w') as f:
             f.write(self.toString())
 
     def _toDataFrame(self):
@@ -745,7 +745,7 @@ class FASTInputFile(File):
         return dfs
 
     def toGraph(self):
-        from .fast_input_file_graph import fastToGraph
+        from fast_input_file_graph import fastToGraph
         return fastToGraph(self)
         
 

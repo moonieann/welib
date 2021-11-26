@@ -7,26 +7,26 @@ import pandas as pd
 import welib.fast.case_gen as case_gen
 import welib.fast.runner as runner
 import welib.fast.postpro as postpro
-import welib.weio as io
+import welib.weio.excel_file as ioexcel
 #import pyFAST.case_geneneration.case_gen as case_gen
 #import pyFAST.case_geneneration.runner as case_gen
 #import pyFAST.input_output.postpro as postpro
 #import pyFAST.input_output as io
 
 # Get current directory so this script can be called from any location
-MyDir=os.path.dirname(__file__)
+MyDir = os.path.dirname(__file__)
 
 
 def main():
     # --- Main Parameters
     ref_dir        = os.path.join(MyDir, '../../../data/NREL5MW/')  # Folder where the fast input files are located (will be copied)
-    FAST_EXE       = os.path.join(MyDir, '../../../data/openfast.exe') # Location of a FAST exe (and dll)
+    FAST_EXE       = os.path.join(MyDir, '../../../data/openfast_x64.exe') # Location of a FAST exe (and dll)
     main_file      = 'Main_Onshore_OF2.fst'          # Main file in ref_dir, used as a template
     work_dir       = '_NREL5MW_ParametricExcel/'     # Output folder (will be created)
     parametricFile = 'ParametricExcel.xlsx'          # Excel file containing set of parameters
 
     # --- Reading Excel file, converting it to a list of dictionaries, and generate input files
-    dfs    = io.excel_file.ExcelFile(parametricFile).toDataFrame()
+    dfs    = ioexcel.ExcelFile(parametricFile).toDataFrame()
     df     = dfs[list(dfs.keys())[0]]
     PARAMS = df.to_dict('records')
     print(df)
@@ -35,7 +35,7 @@ def main():
     # --- Running fast simulations
     print('>>> Running {} simulations in {} ...'.format(len(fastFiles), work_dir))
     runner.writeBatch(os.path.join(work_dir,'_RUN_ALL.bat'),fastFiles,fastExe=FAST_EXE)
-    runner.run_fastfiles(fastFiles, showOutputs=False, fastExe=FAST_EXE, nCores=4)
+    runner.run_fastfiles(fastFiles, showOutputs=True, fastExe=FAST_EXE, nCores=4)
 
     # --- Postpro - Computing averages at the end of the simluation
     print('>>> Postprocessing...')

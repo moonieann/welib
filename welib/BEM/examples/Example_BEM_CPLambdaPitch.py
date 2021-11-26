@@ -25,7 +25,7 @@ def main(test=False,extra=False):
     V0=10
     R=r[-1]
 
-    tilt = 6; # TODO
+    tilt = 6;          # TODO
     V0=V0*np.cos(tilt*np.pi/180)
 
     CP=np.zeros((len(vlambda),len(vpitch)))

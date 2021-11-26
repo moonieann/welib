@@ -9,6 +9,7 @@ import stat
 import re
 
 # --- Misc fast libraries
+import weio.fast_wind_file
 import welib.weio.fast_input_file as fi
 import welib.fast.runner as runner
 import welib.fast.postpro as postpro
@@ -171,7 +172,7 @@ def templateReplaceGeneral(PARAMS, templateDir=None, outputDir=None, main_file=N
             #print('Setting', FileKey, '|',Key, 'to',ParamValue)
             if Key=='OutList':
                 OutList=f[Key]
-                f[Key]=addToOutlist(OutList, ParamValue)
+                f[Key]= postpro.addToOutlist(OutList, ParamValue)
             else:
                 f[Key] = ParamValue
         else:
@@ -248,8 +249,8 @@ def templateReplaceGeneral(PARAMS, templateDir=None, outputDir=None, main_file=N
             new_mainFile, Files = replaceRecurse(main_file_base, '', k, v, Files, strID, wd, TemplateFiles)
 
         # --- Writting files
-        for k,f in Files.items():
-            if k=='Root':
+        for k, f in Files.items():
+            if k== 'Root':
                 files.append(f.filename)
             f.write()
 
@@ -342,7 +343,7 @@ def paramsStiff(p=dict()):
     p['EDFile|PtfmYDOF']  = 'False'
     return p
 
-def paramsWS_RPM_Pitch(WS, RPM, Pitch, baseDict=None, flatInputs=False):
+def paramsWS_RPM_Pitch(WS, RPM, Pitch, baseDict=None, FlatInputs=False):
     """ 
     Generate OpenFAST "parameters" (list of dictionaries with "address")
     chaing the inputs in ElastoDyn, InflowWind for different wind speed, RPM and Pitch
@@ -355,7 +356,7 @@ def paramsWS_RPM_Pitch(WS, RPM, Pitch, baseDict=None, flatInputs=False):
     RPM   = iterify(RPM)
     Pitch = iterify(Pitch)
     # --- If inputs are not flat but different vectors to length through, we flatten them (TODO: meshgrid and ravel?)
-    if not flatInputs :
+    if not FlatInputs :
         WS_flat    = []
         Pitch_flat = []
         RPM_flat   = []
@@ -438,7 +439,7 @@ def paramsLinearTrim(p=dict()):
 # ---  
 # --------------------------------------------------------------------------------{
 def createStepWind(filename,WSstep=1,WSmin=3,WSmax=25,tstep=100,dt=0.5,tmin=0,tmax=999):
-    f = weio.FASTWndFile()
+    f = weio.fast_wind_file.FASTWndFile()
     Steps= np.arange(WSmin,WSmax+WSstep,WSstep)
     print(Steps)
     nCol = len(f.colNames)
@@ -582,5 +583,5 @@ if __name__=='__main__':
     PARAMS['ServoFile|VS_Rgn2K']    = 0.00038245
     PARAMS['ServoFile|GenEff']      = 0.95
     PARAMS['InflowFile|HWindSpeed'] = 8
-    templateReplace(PARAMS,refDir,RemoveRefSubFiles=True)
+    # templateReplace(PARAMS,refDir,RemoveRefSubFiles=True)
 
